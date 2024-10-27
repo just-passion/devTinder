@@ -4,13 +4,10 @@ const User = require("./models/user");
 
 const app = express(); //web app on server
 
+app.use(express.json()); //middleware to convert json to js object
+
 app.post("/signup", async (req, res) => {
-   const user = new User({
-      firstName: "Tejaswini",
-      lastName: "Veerapur",
-      emailId: "abc@gmail.com",
-      password: "abc@1234"
-   });
+   const user = new User(req.body);
 
    try{
       await user.save(); //returns a promise
@@ -20,7 +17,6 @@ app.post("/signup", async (req, res) => {
       res.status(400).send("Error saving the user" + err.mesage)
    }
 })
-
 
 connectDB()
   .then(() => {
