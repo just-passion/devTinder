@@ -9,19 +9,40 @@ const app = express(); //web app on server
 app.use(express.json()); //middleware to convert json to js object
 
 app.post("/signup", async (req, res) => {
-
   try {
     validateSignUpData(req);
-    const {firstName, lastName, emailId, password} = req.body;
+    const { firstName, lastName, emailId, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = new User({
-      firstName, lastName, emailId, password: passwordHash
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
     });
     await user.save(); //returns a promise
     res.send("User added successfully");
   } catch (err) {
     res.status(400).send("Error saving the user" + err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try { 
+    const {emailId, password} = req.body;
+    const user = await User.findOne({emailId: emailId});
+    if(!user){
+      throw new Error("Invalid Credentials")
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if(isPasswordValid){
+      res.send("Login successful");
+    }
+    else{
+      throw new Error("Invalid Credentials");
+    }
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
   }
 });
 
