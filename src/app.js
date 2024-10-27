@@ -1,17 +1,17 @@
- const express = require("express");
+const express = require("express");
+const connectDB = require("./config/database");
 
- const app = express(); //web app on server
+const app = express(); //web app on server
 
- app.use("/getUserData", (req, res) => {
-   try{
-      throw new Error("new error");
-   }
-   catch(err){
-      res.status(500).send("Some error occured contact support team");
-   }
-   // res.send("User Data sent");
- })
+connectDB()
+  .then(() => {
+    console.log("Database connected successfully");
 
- app.listen(3000, ()=>{
-    console.log("server is listening successfully");
- }); //listen on that app
+    //listen only after successfull API connection
+    app.listen(3000, () => {
+      console.log("server is listening successfully");
+    }); //listen on that app
+  })
+  .catch((err) => {
+    console.log("Databse cannot be connected");
+  });
