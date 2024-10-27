@@ -8,7 +8,6 @@ app.use(express.json()); //middleware to convert json to js object
 
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
-
   try {
     await user.save(); //returns a promise
     res.send("User added successfully");
@@ -64,11 +63,13 @@ app.patch("/user", async (req, res) => {
    const data = req.body;
    const userId = req.body.userId;
    try {
-      await User.findByIdAndUpdate({_id: userId}, data);
+      await User.findByIdAndUpdate({_id: userId}, data, {
+        runValidators: true //call validate fn on update
+      });
       res.send("User Updated Successfully");
    }
    catch(err){
-      res.status(400).send("Something went wrong")
+      res.status(400).send("Something went wrong" + err.message)
    }
 })
 
