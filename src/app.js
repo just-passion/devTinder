@@ -12,7 +12,8 @@ app.post("/signup", async (req, res) => {
     await user.save(); //returns a promise
     res.send("User added successfully");
   } catch (err) {
-    res.status(400).send("Error saving the user" + err.mesage);
+    console.log({error: err})
+    res.status(400).send("Error saving the user" + err.message);
   }
 });
 
@@ -59,19 +60,26 @@ app.delete("/user", async (req, res) => {
 //options: before -> log older document, after -> recent updated document after the update
 
 //update API
-app.patch("/user", async (req, res) => {
-   const data = req.body;
-   const userId = req.body.userId;
-   try {
-      await User.findByIdAndUpdate({_id: userId}, data, {
-        runValidators: true //call validate fn on update
-      });
-      res.send("User Updated Successfully");
-   }
-   catch(err){
-      res.status(400).send("Something went wrong" + err.message)
-   }
-})
+app.patch("/user/:userId", async (req, res) => {
+  const data = req.body;
+  const userId = req.params?.userId;
+  const ALLOWED_UPDATES = ["about", "gender", "age"];
+
+  try {
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed")
+    }
+    await User.findByIdAndUpdate({ _id: userId }, data, {
+      runValidators: true, //call validate fn on update
+    });
+    res.send("User Updated Successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong" + err.message);
+  }
+});
 
 connectDB()
   .then(() => {
