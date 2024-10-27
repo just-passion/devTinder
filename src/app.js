@@ -1,21 +1,27 @@
- const express = require("express");
+const express = require("express");
+const { adminAuth, userAuth } = require("./middlewares/auth.js");
 
- const app = express(); //web app on server
+const app = express(); //web app on server
 
- app.use("/user", (req, res, next) => {
-   //Route Handler
-   console.log("1st response");
-   // res.send("1st Response");  
-   next();
- });
+//Middleware use
+app.use("/admin", adminAuth);
 
- app.use("/user", (req, res, next) => {
-   //Route Handler
-   console.log("2nd response");
-   res.send("2nd Response");
- });
+app.get("/user", userAuth, (req, res, next) => {
+  res.send("Middleware of /user will be called for this");
+});
 
- app.listen(3000, ()=>{
-    console.log("server is listening successfully");
-    
- }); //listen on that app
+app.get("/user/login", (req, res, next) => {
+  res.send("Middleware of /user will not be called for this");
+});
+
+app.get("/admin/getAllData", (req, res, next) => {
+  res.send("Admin authorized, getAllData");
+});
+
+app.get("/admin/deleteUser", (req, res, next) => {
+  res.send("Admin authorized, deleted a user");
+});
+
+app.listen(3000, () => {
+  console.log("server is listening successfully");
+}); //listen on that app
