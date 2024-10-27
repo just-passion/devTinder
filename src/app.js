@@ -34,17 +34,43 @@ app.get("/user", async (req, res) => {
 
 //Feed API - get all the users from the DB
 app.get("/feed", async (req, res) => {
-   try {
-      const users = await User.find({});
-      if (users.length === 0) {
-         res.send("No users");
-       } else {
-         res.send(users);
-       }
-     } catch (err) {
-       res.status(400).send("Something went wrong");
-     }
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.send("No users");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
 });
+
+//delete API
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//options: before -> log older document, after -> recent updated document after the update
+
+//update API
+app.patch("/user", async (req, res) => {
+   const data = req.body;
+   const userId = req.body.userId;
+   try {
+      await User.findByIdAndUpdate({_id: userId}, data);
+      res.send("User Updated Successfully");
+   }
+   catch(err){
+      res.status(400).send("Something went wrong")
+   }
+})
 
 connectDB()
   .then(() => {
