@@ -1,18 +1,26 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("./models/user");
+const { validateSignUpData } = require("./utils.js/validation");
+const bcrypt = require("bcrypt");
 
 const app = express(); //web app on server
 
 app.use(express.json()); //middleware to convert json to js object
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
+
   try {
+    validateSignUpData(req);
+    const {firstName, lastName, emailId, password} = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      firstName, lastName, emailId, password: passwordHash
+    });
     await user.save(); //returns a promise
     res.send("User added successfully");
   } catch (err) {
-    console.log({error: err})
     res.status(400).send("Error saving the user" + err.message);
   }
 });
@@ -70,7 +78,7 @@ app.patch("/user/:userId", async (req, res) => {
       ALLOWED_UPDATES.includes(k)
     );
     if (!isUpdateAllowed) {
-      throw new Error("Update not allowed")
+      throw new Error("Update not allowed");
     }
     await User.findByIdAndUpdate({ _id: userId }, data, {
       runValidators: true, //call validate fn on update
