@@ -26,7 +26,7 @@ requestsRouter.post(
           message: "Invalid user ID",
         });
       }
-      
+
       const toUser = await User.findById(toUserId);
       if (!toUser) {
         return res.status(400).json({
@@ -57,7 +57,8 @@ requestsRouter.post(
       const data = await connectionRequest.save();
 
       res.json({
-        message: "Connection Request sent successfully",
+        message:
+          req.user.firstName + " is " + status + " in " + toUser.firstName,
         data,
       });
     } catch (error) {
