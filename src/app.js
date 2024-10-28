@@ -5,6 +5,7 @@ const { validateSignUpData } = require("./utils.js/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } =require("./middlewares/auth");
 
 const app = express(); //web app on server
 
@@ -53,25 +54,17 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("Invalid Token");
-    }
-
-    const decodeMessage = await jwt.verify(token, "DEV@12345");
-
-    const { _id } = decodeMessage;
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("User doess not exist");
-    }
+    const user = req.user;
     res.send(user);
   } catch (error) {}
 });
+
+app.post("/sendConnectionRequest",userAuth, async(req, res) => {
+  const user = req.user;
+  res.send(user.firstName + "connection request sent");
+})
 
 //get user by email
 app.get("/user", async (req, res) => {
