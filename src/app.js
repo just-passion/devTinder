@@ -1,9 +1,11 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
@@ -22,7 +24,7 @@ connectDB()
     console.log("Database connected successfully");
 
     //listen only after successfull API connection
-    app.listen(3000, () => {
+    app.listen(7777, () => {
       console.log("server is listening successfully");
     }); //listen on that app
   })
