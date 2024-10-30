@@ -70,6 +70,10 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
 
     const loggedInUser = req.user;
 
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit; //to limit users from calling any number
+    const skip = (page - 1) * limit;
     //find all connection requests sent or received
     const connectionRequests = await ConnectionRequest.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
@@ -86,7 +90,10 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
         { _id: { $nin: Array.from(hideUsersFromFeed) } }, //not included in
         { _id: { $ne: loggedInUser._id } }, //not equals
       ],
-    }).select(USER_SAFE_DATA);
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
     res.send(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
