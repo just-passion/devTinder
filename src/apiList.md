@@ -1,19 +1,21 @@
 #Dev Tinder APIs
 
 authRouter
+
 - POST /signup
 - POST /login
 - POST /logout
 
 profileRouter
+
 - GET /profile/view
 - GET /profile/edit
 - PATCH /profile/password
 
 connectionRequestRouter
-- POST /request/send/:status/:userId
-- POST /request/review/rejected/:requestId
-- POST /request/review/accepted/:requestId
+
+- POST /request/send/:status/:userId //interested, ignored
+- POST /request/review/:status/:requestId //accepted, rejected
 
 - GET /connections
 - GET /connections/ received
