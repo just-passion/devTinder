@@ -33,7 +33,7 @@ connectionRequestSchema.pre("save", function () {
 });
 
 const connectionRequestModel = new mongoose.model(
-  "connectionRequestModel",
+  "connectionRequest",
   connectionRequestSchema
 );
 
