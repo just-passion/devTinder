@@ -1,24 +1,35 @@
-#Dev Tinder APIs
+# Dev Tinder APIs
 
-authRouter
+## authRouter
 
 - POST /signup
 - POST /login
 - POST /logout
 
-profileRouter
+## profileRouter
 
 - GET /profile/view
 - GET /profile/edit
 - PATCH /profile/password
 
-connectionRequestRouter
+## connectionRequestRouter
 
-- POST /request/send/:status/:userId //interested, ignored
-- POST /request/review/:status/:requestId //accepted, rejected
+# interested, ignored
+- POST /request/send/:status/:userId 
 
-- GET /connections
-- GET /connections/ received
-- GET /feed
+# accepted, rejected
+- POST /request/review/:status/:requestId 
+
+## userRouter
+
+- GET /user/requests/received
+- GET /user/connections
+
+# gets the profiles of other users on platform
+- GET /user/feed   
 
 status: ignore, interested, rejected, accepted
+
+
+- POST API = Attacker can send any data so before adding in database check all the incoming data.
+- GET API = make sure that we are sending back to the user only the correct data.
