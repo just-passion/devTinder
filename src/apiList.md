@@ -23,7 +23,9 @@
 ## userRouter
 
 - GET /user/requests/received
-- GET /user/connections
+
+# accepted connection list
+- GET /user/connections 
 
 # gets the profiles of other users on platform
 - GET /user/feed   
